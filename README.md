@@ -2,32 +2,25 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
-
-Your goal is to:
-
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
-
-Replace this paragraph with your own summary of what your version does.
+In this project, I built a music recommender system that simulates how streaming platforms like Spotify recommend songs. The system uses content-based filtering, scoring songs based on genre, mood, energy, and other features against user preferences. It loads songs from a CSV, scores each one, and ranks the top recommendations with explanations.
 
 ---
 
 ## How The System Works
 
-Explain your design in plain language.
+Real-world recommendations use collaborative filtering (what similar users like) and content-based filtering (song attributes like tempo, mood). My version focuses on content-based, using features like genre, mood, energy, valence, danceability, acousticness.
 
-Some prompts to answer:
+Song features: genre, mood, energy (0-1), valence (positivity), danceability, acousticness.
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+UserProfile: favorite_genre, favorite_mood, target_energy, likes_acoustic.
 
-You can include a simple diagram or bullet list if helpful.
+Scoring: +2 for genre match, +1 for mood match, energy score = 1 - abs(song_energy - target_energy), acoustic bonus if likes_acoustic and high acousticness.
+
+Ranking: Sort by total score descending.
+
+Data flow: Load songs → For each song, compute score and reasons → Sort by score → Return top k with explanations.
+
+Potential biases: Over-prioritizes genre, may ignore acoustic preferences if not weighted properly.
 
 ---
 
