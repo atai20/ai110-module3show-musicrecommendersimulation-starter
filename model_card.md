@@ -2,101 +2,59 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+VibeMatcher 1.0  
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+This recommender generates personalized music recommendations based on user preferences for genre, mood, energy level, and acoustic preference. It's designed for classroom exploration to understand how content-based filtering works, not for real production use. It assumes users have clear preferences for these attributes and that songs can be matched directly to them.
 
 ---
 
 ## 3. How the Model Works  
 
-Explain your scoring approach in simple language.  
+The system scores songs by matching user preferences: +2 points for genre match, +1 for mood match, energy similarity (closer values get higher scores, doubled in weight), and +0.5 if the user likes acoustic and the song is acoustic. It then ranks songs by total score and returns the top ones with reasons.
 
-Prompts:  
+Features used: genre, mood, energy (0-1 scale), acousticness. User considers favorite_genre, favorite_mood, target_energy, likes_acoustic.
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+From starter, I added energy similarity scoring and acoustic bonus.
 
 ---
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+20 songs in the catalog, expanded from 10 with diverse genres (pop, lofi, rock, electronic, folk, jazz, ambient, synthwave, indie, blues, reggae, country) and moods (happy, chill, intense, relaxed, moody, focused, energetic, calm, aggressive, smooth, peaceful, party, sad, heartfelt). Added numerical features like valence, danceability, acousticness. Missing: user listening history, collaborative data, tempo matching beyond energy.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+Works well for users with strong genre preferences, as genre match gives high points. Captures energy vibe well with the similarity score. For chill lofi fans, it prioritizes low-energy, acoustic songs accurately.
 
 ---
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+Over-prioritizes genre (2 points) over mood (1), so might recommend wrong mood if genre matches. Energy weight doubled might make it too sensitive to energy, ignoring other factors. Underrepresents some genres like country or reggae. Acoustic bonus only applies if explicitly set, missing nuanced acoustic preferences. May create filter bubbles by always favoring matching genres.
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+Tested with three profiles: High-Energy Pop (pop, happy, 0.9 energy), Chill Lofi (lofi, chill, 0.4, acoustic), Deep Intense Rock (rock, intense, 0.95). Looked for top songs matching preferences. Surprised that energy similarity became dominant after doubling weight. Ran experiment doubling energy weight, which shifted rankings toward energy matches.
 
 ---
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
+Add more features like valence for positivity, danceability. Improve explanations with more details. Add diversity penalty to avoid too many same artists/genres. Handle multiple preferences or ranges instead of exact matches. Incorporate collaborative filtering with user history.
 
-Prompts:  
+---
 
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+## Personal Reflection
+
+Biggest learning: How simple weighted scoring can simulate recommendations, but biases emerge easily. AI tools helped generate diverse songs and brainstorm scoring rules, but I double-checked math. Surprised that doubling energy weight made rankings more energy-focused, showing sensitivity. Next, I'd add user feedback loop or more features like tempo.  
 
 ---
 

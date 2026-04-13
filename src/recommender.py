@@ -38,12 +38,40 @@ class Recommender:
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
-        # TODO: Implement recommendation logic
-        return self.songs[:k]
+        # Score each song
+        scored = []
+        for song in self.songs:
+            score = self._score_song(user, song)
+            scored.append((song, score))
+        # Sort by score desc
+        scored.sort(key=lambda x: x[1], reverse=True)
+        return [s[0] for s in scored[:k]]
+
+    def _score_song(self, user: UserProfile, song: Song) -> float:
+        score = 0.0
+        if song.genre == user.favorite_genre:
+            score += 2.0
+        if song.mood == user.favorite_mood:
+            score += 1.0
+        energy_diff = abs(song.energy - user.target_energy)
+        energy_score = (1 - energy_diff) * 2  # doubled
+        score += energy_score
+        if user.likes_acoustic and song.acousticness > 0.5:
+            score += 0.5
+        return score
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
-        # TODO: Implement explanation logic
-        return "Explanation placeholder"
+        reasons = []
+        if song.genre == user.favorite_genre:
+            reasons.append("genre match")
+        if song.mood == user.favorite_mood:
+            reasons.append("mood match")
+        energy_diff = abs(song.energy - user.target_energy)
+        energy_score = (1 - energy_diff) * 2
+        reasons.append(f"energy similarity {energy_score:.2f}")
+        if user.likes_acoustic and song.acousticness > 0.5:
+            reasons.append("acoustic preference")
+        return ", ".join(reasons)
 
 def load_songs(csv_path: str) -> List[Dict]:
     """
@@ -88,9 +116,9 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
         score += 1.0
         reasons.append("mood match (+1.0)")
     
-    # Energy similarity: 1 - abs(diff), scaled to 0-1, then *1
+    # Energy similarity: 1 - abs(diff), scaled to 0-1, then *2
     energy_diff = abs(song['energy'] - user_prefs.get('energy', 0.5))
-    energy_score = 1 - energy_diff
+    energy_score = (1 - energy_diff) * 2
     score += energy_score
     reasons.append(f"energy similarity ({energy_score:.2f})")
     
